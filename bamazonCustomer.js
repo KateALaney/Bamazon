@@ -22,7 +22,7 @@ connection.connect(function (err) {
 });
 
 // Start the program by offering users three options: view items, purchase an item, or exit the program.
-function start() {
+function startCustomer() {
   inquirer
     .prompt({
       name: "viewPurchase",
@@ -66,7 +66,6 @@ var productInfo = [];
 function itemsAvailable() {
   connection.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
-    // console.log("ID | Item | Department | Price | Units Available")
     for (var i = 0; i < res.length; i++) {
       productInfo.push([
         res[i].item_id,
@@ -90,7 +89,8 @@ function itemsAvailable() {
   purchaseOrExit();
 };
 
-// Offers users the ability to purchase an item, and asks how many they need.
+// Offers users the ability to purchase an item, and asks how many they need.  Then checks request against available inventory, and returns either: a) a positive confirmation
+// of purchase, including total cost; or b) a message that there is not enough inventory, and asks user to place purchase again.
 function promptUserPurchase() {
   inquirer.prompt([{
       type: "input",
@@ -107,7 +107,7 @@ function promptUserPurchase() {
   ]).then(function (input) {
     var item = input.item_id;
     var quantity = input.quantity;
-    var queryStr = 'SELECT * FROM products WHERE ?';
+    var queryStr = "SELECT * FROM products WHERE ?";
     connection.query(queryStr, {
       item_id: item
     }, function (err, data) {
@@ -138,4 +138,6 @@ function promptUserPurchase() {
   });
 };
 
-start();
+startCustomer();
+
+module.exports = customerView;
