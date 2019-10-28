@@ -1,7 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cli = require("pixl-cli");
-const chalk = require("chalk");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -35,12 +34,12 @@ function start() {
       if (answer.viewPurchase === "View") {
         itemsAvailable();
       } else if (answer.viewPurchase === "Purchase") {
-        purchaseItem();
+        promptUserPurchase();
       } else {
         connection.end();
       }
     });
-}
+};
 
 // Offer users the opportunity to either purchase an item or exit the program.
 function purchaseOrExit() {
@@ -53,12 +52,13 @@ function purchaseOrExit() {
     })
     .then(function (response) {
       if (response.purchaseExit === "Purchase") {
-        purchaseItem();
+        promptUserPurchase();
       } else if (response.purchaseExit === "Exit") {
+        console.log("Thank you for shopping with us!")
         connection.end();
       }
     });
-}
+};
 
 // Show customer all available products.
 var productInfo = [];
@@ -88,69 +88,54 @@ function itemsAvailable() {
     productInfo = []
   });
   purchaseOrExit();
-}
+};
 
-// Offes users the ability to purchase an item.
-function purchaseItem() {
-  connection.query("SELECT * FROM products", function (err, res) {
-    if (err) throw err;
-    inquirer
-      .prompt([{
-        name: "choice",
-        type: "rawlist",
-        choices: function () {
-          var choiceArray = [];
-          for (var i = 0; i < res.length; i++) {
-            choiceArray.push(res[i].product_name);
-          }
-          return choiceArray;
-        },
-        message: "What item would you like to purchase? (Please use item ID.)"
-      }, ])
-      .then(function (answer) {
-        var chosenItem;
-        for (var i = 0; i < res.length; i++) {
-          if (res[i].item_id === answer.choice) {
-            chosenItem = res[i];
-          }
+// Offers users the ability to purchase an item, and asks how many they need.
+function promptUserPurchase() {
+  inquirer.prompt([{
+      type: "input",
+      name: "item_id",
+      message: "Please enter the item ID which you would like to purchase. (Please use item numbers only.)",
+      filter: Number
+    },
+    {
+      type: "input",
+      name: "quantity",
+      message: "How many units of the item would you like to purchase?",
+      filter: Number
+    }
+  ]).then(function (input) {
+    var item = input.item_id;
+    var quantity = input.quantity;
+    var queryStr = 'SELECT * FROM products WHERE ?';
+    connection.query(queryStr, {
+      item_id: item
+    }, function (err, data) {
+      if (err) throw err;
+      if (data.length === 0) {
+        console.log("ERROR: Invalid item ID. Please select a valid item ID.");
+        itemsAvailable();
+
+      } else {
+        var productData = data[0];
+        if (quantity <= productData.stock_quantity) {
+          console.log("The product you requested is in stock.");
+          var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
+          connection.query(updateQueryStr, function (err, data) {
+            if (err) throw err;
+            console.log("Your order has been placed. Your total is $" + productData.price * quantity);
+            console.log("Thank you for shopping with us!");
+            console.log("\n---------------------------------------------------------------------\n");
+            connection.end();
+          })
+        } else {
+          console.log("Sorry, there are not enough units in stock.  Please place a new order.");
+          console.log("\n---------------------------------------------------------------------\n");
+          itemsAvailable();
         }
-
-        // // determine if bid was high enough
-        // if (chosenItem.highest_bid < parseInt(answer.bid)) {
-        //   // bid was high enough, so update db, let the user know, and start over
-        //   connection.query(
-        //     "UPDATE auctions SET ? WHERE ?",
-        //     [
-        //       {
-        //         highest_bid: answer.bid
-        //       },
-        //       {
-        //         id: chosenItem.id
-        //       }
-        //     ],
-        //     function(error) {
-        //       if (error) throw err;
-        //       console.log("Bid placed successfully!");
-        //       start();
-        //     }
-        //   );
-        // }
-        // else {
-        //   // bid wasn't high enough, so apologize and start over
-        //   console.log("Your bid was too low. Try again...");
-      });
-  })
-}
+      };
+    });
+  });
+};
 
 start();
-
-
-// Ask customer how many units of item customer wants to buy.
-
-// Check to see if enough items of product are available.
-
-// Fulfill the customer's order.
-
-// Update database to show remaining quantity.
-
-// Show the customer total cost of their purchase.
