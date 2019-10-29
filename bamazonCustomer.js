@@ -139,5 +139,3 @@ function promptUserPurchase() {
 };
 
 startCustomer();
-
-module.exports = customerView;
