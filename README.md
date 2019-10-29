@@ -11,9 +11,11 @@ This is the entry menu the customer sees on opening the program.
 <br></br>
 ![Customer View Intro](images/CustomerViewIntro.png)
 <br></br>
-This shows the view of all products when the customer selects "view".
+This shows the view of all products when the customer selects "view".  Once "view" has been selected, users are then given the option to make a purchase or exit the program.
 <br></br>
 ![Customer View Select](images/CustomerViewSelect.png)
+<br></br>
+This shows what happens when the customer selects "purchase".  The customer is prompted to choose the item number of the product they want to purchase, and then the quantity of that product.  If there is enough product in stock, they are told their purchase has been a success, and are given the total cost of their purchase.
 <br></br>
 ![Customer View Complete](images/CustomerViewComplete.png)
 <br></br>
