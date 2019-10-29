@@ -1,0 +1,26 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "inventory system",
+  "main": "bamazonCustomer.js",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "inquirer": "^7.0.0",
+    "mysql": "^2.17.1",
+    "pixl-cli": "^1.0.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KateALaney/Bamazon.git"
+  },
+  "author": "Kate Laney",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KateALaney/Bamazon/issues"
+  },
+  "homepage": "https://github.com/KateALaney/Bamazon#readme"
+}
