@@ -19,6 +19,8 @@ This shows what happens when the customer selects "purchase".  The customer is p
 <br></br>
 ![Customer View Complete](images/CustomerViewComplete.png)
 <br></br>
+This last view is what happens when a user attempts to purchase a product that is no longer in stock, or when they attempt to purchase more items than are available.  They are given the option to return to the main menu to either make a purchase or exit.
+<br></br>
 ![Out of Stock](images/OutofStock.png)
 
 ## Manager View ##
