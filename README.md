@@ -15,7 +15,7 @@ This shows the view of all products when the customer selects "view".  Once "vie
 <br></br>
 ![Customer View Select](images/CustomerViewSelect.png)
 <br></br>
-This shows what happens when the customer selects "purchase".  The customer is prompted to choose the item number of the product they want to purchase, and then the quantity of that product.  If there is enough product in stock, they are told their purchase has been a success, and are given the total cost of their purchase.
+This shows what happens when the customer selects "purchase".  The customer is prompted to choose the item number of the product they want to purchase, and then the quantity of that product.  If there is enough product in stock, they are told their purchase has been a success, and are given the total cost of their purchase.  The quantity is then updated in the stock database.
 <br></br>
 ![Customer View Complete](images/CustomerViewComplete.png)
 <br></br>
