@@ -120,7 +120,6 @@ function productUpdate (answer) {
     })
     .then(function (answer) {
       if (answer.viewOptions === "Add Inventory") {
-        // TODO
         addInventory();
       } else if (answer.viewOptions === "Delete Inventory") {
         // TODO
@@ -131,3 +130,41 @@ function productUpdate (answer) {
 }
 
 startManager();
+
+var addInventory = function() {
+
+	inquirer.prompt([
+		{
+			name: "item_id",
+			type: "input",
+			message: "Enter product ID where you would like to add stock."
+		},
+		{
+			name: "stock",
+			type: "input",
+			message: "How much stock would you like to add?"
+		}
+	]).then(function(answer) {
+		connection.query("SELECT * FROM products", function(err, results) {
+			var chosenItem;
+			for (var i = 0; i < results.length; i++) {
+				if (results[i].item_id === parseInt(answer.item_id)) {
+					chosenItem = results[i];
+			var updatedStock = parseInt(chosenItem.stock_quantity) + parseInt(answer.stock);
+			connection.query("UPDATE products SET ? WHERE ?", [{
+				stock_quantity: updatedStock
+			}, {
+				item_id: answer.item_id
+			}], function (err, res) {
+				if (err) {
+					throw err;
+				} else {
+          // TODO
+					selectAction();
+				}
+			});
+			
+		});
+
+	});
+};
