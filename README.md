@@ -7,7 +7,11 @@ You will need to install the `inquirer` and `pixl-cli` packages.  The password n
 ## Customer View ##
 The customer view offers customers the ability to view and purchase products, updates the inventory accordingly, and displays the total cost of the customer's purchase.
 <br></br>
+This is the entry menu the customer sees on opening the program.
+<br></br>
 ![Customer View Intro](images/CustomerViewIntro.png)
+<br></br>
+This shows the view of all products when the customer selects "view".
 <br></br>
 ![Customer View Select](images/CustomerViewSelect.png)
 <br></br>
