@@ -92,50 +92,50 @@ function itemsAvailable() {
 // Offers users the ability to purchase an item, and asks how many they need.  Then checks request against available inventory, and returns either: a) a positive confirmation
 // of purchase, including total cost; or b) a message that there is not enough inventory, and asks user to place purchase again.
 function promptUserPurchase() {
-  inquirer.prompt([{
-      type: "input",
-      name: "item_id",
-      message: "Please enter the item ID which you would like to purchase. (Please use item numbers only.)",
-      filter: Number
-    },
-    {
-      type: "input",
-      name: "quantity",
-      message: "How many units of the item would you like to purchase?",
-      filter: Number
-    }
-  ]).then(function (input) {
-    var item = input.item_id;
-    var quantity = input.quantity;
-    var queryStr = "SELECT * FROM products WHERE ?";
-    connection.query(queryStr, {
-      item_id: item
-    }, function (err, data) {
-      if (err) throw err;
-      if (data.length === 0) {
-        console.log("ERROR: Invalid item ID. Please select a valid item ID.");
-        itemsAvailable();
-
-      } else {
-        var productData = data[0];
-        if (quantity <= productData.stock_quantity) {
-          console.log("The product you requested is in stock.");
-          var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
-          connection.query(updateQueryStr, function (err, data) {
-            if (err) throw err;
-            console.log("Your order has been placed. Your total is $" + productData.price * quantity);
-            console.log("Thank you for shopping with us!");
-            console.log("\n---------------------------------------------------------------------\n");
-            connection.end();
-          })
-        } else {
-          console.log("Sorry, there are not enough units in stock.  Please place a new order.");
-          console.log("\n---------------------------------------------------------------------\n");
+  inquirer
+    .prompt([{
+        type: "input",
+        name: "item_id",
+        message: "Please enter the item ID which you would like to purchase. (Please use item numbers only.)",
+        filter: Number
+      },
+      {
+        type: "input",
+        name: "quantity",
+        message: "How many units of the item would you like to purchase?",
+        filter: Number
+      }
+    ]).then(function (input) {
+      var item = input.item_id;
+      var quantity = input.quantity;
+      var queryStr = "SELECT * FROM products WHERE ?";
+      connection.query(queryStr, {
+        item_id: item
+      }, function (err, data) {
+        if (err) throw err;
+        if (data.length === 0) {
+          console.log("ERROR: Invalid item ID. Please select a valid item ID.");
           itemsAvailable();
-        }
-      };
+        } else {
+          var productData = data[0];
+          if (quantity <= productData.stock_quantity) {
+            console.log("The product you requested is in stock.");
+            var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
+            connection.query(updateQueryStr, function (err, data) {
+              if (err) throw err;
+              console.log("Your order has been placed. Your total is $" + productData.price * quantity);
+              console.log("Thank you for shopping with us!");
+              console.log("\n---------------------------------------------------------------------\n");
+              connection.end();
+            })
+          } else {
+            console.log("Sorry, there are not enough units in stock.  Please place a new order.");
+            console.log("\n---------------------------------------------------------------------\n");
+            itemsAvailable();
+          }
+        };
+      });
     });
-  });
 };
 
 startCustomer();

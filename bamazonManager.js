@@ -1,11 +1,5 @@
 // List a set of menu options:
-// View Products for Sale
-// View Low Inventory
-// Add to Inventory
 // Add New Product
-// If a manager selects View Products for Sale, the app should list every available item: the item IDs, names, prices, and quantities.
-// If a manager selects View Low Inventory, then it should list all items with an inventory count lower than five.
-// If a manager selects Add to Inventory, your app should display a prompt that will let the manager "add more" of any item currently in the store.
 // If a manager selects Add New Product, it should allow the manager to add a completely new product to the store.
 
 var mysql = require("mysql");
@@ -46,13 +40,12 @@ function startManager() {
       } else if (answer.viewOptions === "View Low Inventory") {
         lowInventory();
       } else if (answer.viewOptions === "Update A Product") {
-        // TODO
         productUpdate();
       } else if (answer.viewOptions === "Add A Product") {
         // TODO
         productAdd();
-      } else(answer.viewOptions === "Exit")
-      connection.end();
+      } else (answer.viewOptions === "Exit")
+      //connection.end();
     });
 };
 
@@ -84,6 +77,7 @@ function itemsAvailable() {
   });
 };
 
+// Show users all items that have a quantity of less than 20.
 function lowInventory() {
   var query = "SELECT * FROM products WHERE stock_quantity < 20";
   connection.query(query, function (err, res) {
@@ -110,7 +104,8 @@ function lowInventory() {
   });
 };
 
-function productUpdate (answer) {
+// Allow users to update the inventory by increasing or decreasing quantities from the database.
+function productUpdate() {
   inquirer
     .prompt({
       name: "viewOptions",
@@ -122,49 +117,151 @@ function productUpdate (answer) {
       if (answer.viewOptions === "Add Inventory") {
         addInventory();
       } else if (answer.viewOptions === "Delete Inventory") {
-        // TODO
-        deleteInventory();
-      } else(answer.viewOptions === "Exit")
-      connection.end();
+        decreaseInventory();
+      } else (answer.viewOptions === "Exit")
     });
-}
+};
+
+// Allow users to increase quantity in the database.
+function addInventory() {
+  inquirer
+    .prompt([{
+        name: "addItem",
+        type: "input",
+        message: "What is the item number of the product you want to add?",
+        filter: Number
+      },
+      {
+        name: "stockNumber",
+        type: "input",
+        message: "How much stock would you like to add?",
+        filter: Number
+      }
+    ]).then(function (input) {
+      var item = input.addItem;
+      var quantity = input.stockNumber;
+      var queryStr = "SELECT * FROM products WHERE ?";
+      connection.query(queryStr,
+        [{
+            item_ID: item
+          },
+          {
+            stock_quantity: quantity
+          },
+        ],
+        function (err, data) {
+          if (err) throw err;
+          else {
+            var productData = data[0];
+            var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity + quantity) + " WHERE item_id = " + item;
+            connection.query(updateQueryStr, function (err, data) {
+              if (err) throw err;
+              console.log("The stock has been updated.");
+              console.log("\n---------------------------------------------------------------------\n");
+              connection.end();
+            })
+          };
+        })
+    });
+};
+
+// Allow users to decrease quantity in the database.
+function decreaseInventory() {
+  inquirer
+    .prompt([{
+        name: "decreaseItem",
+        type: "input",
+        message: "What is the item number of the product you want to decrease?",
+        filter: Number
+      },
+      {
+        name: "stockNumber",
+        type: "input",
+        message: "How much stock would you like to add?",
+        filter: Number
+      }
+    ]).then(function (input) {
+      var item = input.decreaseItem;
+      var quantity = input.stockNumber;
+      var queryStr = "SELECT * FROM products WHERE ?";
+      connection.query(queryStr,
+        [{
+            item_ID: item
+          },
+          {
+            stock_quantity: quantity
+          },
+        ],
+        function (err, data) {
+          if (err) throw err;
+          else {
+            var productData = data[0];
+            var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
+            connection.query(updateQueryStr, function (err, data) {
+              if (err) throw err;
+              console.log("The stock has been updated.");
+              console.log("\n---------------------------------------------------------------------\n");
+              connection.end();
+            })
+          };
+        })
+    });
+};
+
+// Allow users to add a new product to the inventory.
+function productAdd() {
+  inquirer
+    .prompt([{
+        name: "productName",
+        type: "input",
+        message: "What is the name of the product you would like to add?",
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "What department is the product in?",
+      },
+      {
+        name: "authorArtist",
+        type: "input",
+        message: "What is the name of the author/artist?",
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What is the cost of the item?",
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: "How many items of the product would you like to stock?",
+      },
+    ]).then(function (input) {
+      var item = input.decreaseItem;
+      var quantity = input.stockNumber;
+      var queryStr = "SELECT * FROM products WHERE ?";
+      connection.query(queryStr,
+        [{
+            item_ID: item
+          },
+          {
+            stock_quantity: quantity
+          },
+        ],
+        function (err, data) {
+          if (err) throw err;
+          else {
+            var productData = data[0];
+            var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
+            connection.query(updateQueryStr, function (err, data) {
+              if (err) throw err;
+              console.log("The stock has been updated.");
+              console.log("\n---------------------------------------------------------------------\n");
+              connection.end();
+            })
+          };
+        })
+    });
+};
 
 startManager();
-
-var addInventory = function() {
-
-	inquirer.prompt([
-		{
-			name: "item_id",
-			type: "input",
-			message: "Enter product ID where you would like to add stock."
-		},
-		{
-			name: "stock",
-			type: "input",
-			message: "How much stock would you like to add?"
-		}
-	]).then(function(answer) {
-		connection.query("SELECT * FROM products", function(err, results) {
-			var chosenItem;
-			for (var i = 0; i < results.length; i++) {
-				if (results[i].item_id === parseInt(answer.item_id)) {
-					chosenItem = results[i];
-			var updatedStock = parseInt(chosenItem.stock_quantity) + parseInt(answer.stock);
-			connection.query("UPDATE products SET ? WHERE ?", [{
-				stock_quantity: updatedStock
-			}, {
-				item_id: answer.item_id
-			}], function (err, res) {
-				if (err) {
-					throw err;
-				} else {
-          // TODO
-					selectAction();
-				}
-			});
-			
-		});
-
-	});
-};
