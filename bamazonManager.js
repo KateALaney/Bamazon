@@ -44,7 +44,7 @@ function startManager() {
       } else if (answer.viewOptions === "Add A Product") {
         // TODO
         productAdd();
-      } else (answer.viewOptions === "Exit")
+      } else(answer.viewOptions === "Exit")
       //connection.end();
     });
 };
@@ -118,7 +118,7 @@ function productUpdate() {
         addInventory();
       } else if (answer.viewOptions === "Delete Inventory") {
         decreaseInventory();
-      } else (answer.viewOptions === "Exit")
+      } else(answer.viewOptions === "Exit")
     });
 };
 
@@ -212,6 +212,12 @@ function decreaseInventory() {
 function productAdd() {
   inquirer
     .prompt([{
+      name: "id",
+      type: "input",
+      message: "Please input the item ID.",
+      filter: Number
+    },
+      {
         name: "productName",
         type: "input",
         message: "What is the name of the product you would like to add?",
@@ -236,32 +242,23 @@ function productAdd() {
         type: "input",
         message: "How many items of the product would you like to stock?",
       },
-    ]).then(function (input) {
-      var item = input.decreaseItem;
-      var quantity = input.stockNumber;
-      var queryStr = "SELECT * FROM products WHERE ?";
-      connection.query(queryStr,
-        [{
-            item_ID: item
-          },
-          {
-            stock_quantity: quantity
-          },
-        ],
-        function (err, data) {
-          if (err) throw err;
-          else {
-            var productData = data[0];
-            var updateQueryStr = "UPDATE products SET stock_quantity = " + (productData.stock_quantity - quantity) + " WHERE item_id = " + item;
-            connection.query(updateQueryStr, function (err, data) {
-              if (err) throw err;
-              console.log("The stock has been updated.");
-              console.log("\n---------------------------------------------------------------------\n");
-              connection.end();
-            })
-          };
-        })
-    });
+    ]).then(function (answers) {
+      var id = answers.id;
+      var name = answers.productName;
+      var department = answers.department;
+      var author_artist = answers.author_artist;
+      var price = answers.price;
+      var quantity = answers.quantity;
+      buildNewItem(id, name, department, author_artist, price, quantity);
+      console.log("The stock has been updated.");
+      console.log("\n---------------------------------------------------------------------\n");
+      connection.end();
+    })
+};
+
+function buildNewItem(id, name, department, author_artist, price, quantity){
+  connection.query("INSERT INTO products (item_id,product_name,department_name,author_artist,price,stock_quantity) VALUES" + id + name + department + author_artist + price + quantity); 
+  itemsAvailable();
 };
 
 startManager();
