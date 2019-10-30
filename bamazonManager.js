@@ -177,7 +177,7 @@ function decreaseInventory() {
       {
         name: "stockNumber",
         type: "input",
-        message: "How much stock would you like to add?",
+        message: "How much stock would you like to delete?",
         filter: Number
       }
     ]).then(function (input) {
