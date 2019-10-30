@@ -57,3 +57,8 @@ The last view allows managers to add a new product to the inventory.  This is th
 This shows the view for adding a new product and the results of the product being added.
 <br></br>
 ![Manager After Add](images/ManagerAfterAdd.png)
+<br></br>
+## Technologies Used
+<ul>Javascript</ul>
+<ul>Node.js</ul>
+<ul>MySQL</ul>
