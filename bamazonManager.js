@@ -211,24 +211,19 @@ function decreaseInventory() {
 // Allow users to add a new product to the inventory.
 function productAdd() {
   inquirer
-    .prompt([{
-      name: "id",
-      type: "input",
-      message: "Please input the item ID.",
-      filter: Number
-    },
+    .prompt([
       {
-        name: "productName",
+        name: "product_name",
         type: "input",
         message: "What is the name of the product you would like to add?",
       },
       {
-        name: "department",
+        name: "department_name",
         type: "input",
         message: "What department is the product in?",
       },
       {
-        name: "authorArtist",
+        name: "author_artist",
         type: "input",
         message: "What is the name of the author/artist?",
       },
@@ -236,29 +231,22 @@ function productAdd() {
         name: "price",
         type: "input",
         message: "What is the cost of the item?",
+        filter: Number
       },
       {
-        name: "quantity",
+        name: "stock_quantity",
         type: "input",
         message: "How many items of the product would you like to stock?",
+        filter: Number
       },
     ]).then(function (answers) {
-      var id = answers.id;
-      var name = answers.productName;
-      var department = answers.department;
-      var author_artist = answers.author_artist;
-      var price = answers.price;
-      var quantity = answers.quantity;
-      buildNewItem(id, name, department, author_artist, price, quantity);
-      console.log("The stock has been updated.");
-      console.log("\n---------------------------------------------------------------------\n");
-      connection.end();
+      var queryStr = "INSERT INTO products SET ?";
+      connection.query(queryStr, answers, function (err, res, fields) {
+        if (err) throw err;
+        console.log("New product has been added to the inventory.")
+      })
+      itemsAvailable();
     })
-};
-
-function buildNewItem(id, name, department, author_artist, price, quantity){
-  connection.query("INSERT INTO products (item_id,product_name,department_name,author_artist,price,stock_quantity) VALUES" + id + name + department + author_artist + price + quantity); 
-  itemsAvailable();
 };
 
 startManager();
