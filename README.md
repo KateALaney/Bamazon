@@ -58,6 +58,8 @@ This shows the view for adding a new product and the results of the product bein
 <br></br>
 ![Manager After Add](images/ManagerAfterAdd.png)
 <br></br>
+## Deployed Version of App
+https://katealaney.github.io/Bamazon/
 ## Technologies Used
 1. Javascript
 2. Node.js
