@@ -59,6 +59,6 @@ This shows the view for adding a new product and the results of the product bein
 ![Manager After Add](images/ManagerAfterAdd.png)
 <br></br>
 ## Technologies Used
-<ul>Javascript</ul>
-<ul>Node.js</ul>
-<ul>MySQL</ul>
+1. Javascript
+2. Node.js
+3. MySQL
